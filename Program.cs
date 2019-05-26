@@ -9,29 +9,38 @@ namespace Lsita
 {
     class Program
     {
-        public enum cargo {Auxiliar, Administrativo, Ingeniero, Especialista, Investigador};
+        public enum cargo { Auxiliar, Administrativo, Ingeniero, Especialista, Investigador };
         static void Main(string[] args)
         {
             char key;
-            List<Empleado> Agenda= new List<Empleado>();
+            List<Empleado> Agenda = new List<Empleado>();
             Empleado empleado;
             do
             {
-                Console.WriteLine("1. Ver Agenda");
+                Console.WriteLine("1. Ver Agenda (Contactos: {0})", CantidaddeEmpleados(Agenda));
                 Console.WriteLine("2. Agregar Empleado a la Agenda");
+                Console.WriteLine("3. Monto Total de los Empleados de la Agenda");
                 Console.WriteLine("0. Salir");
                 key = Console.ReadKey(true).KeyChar;
-                //Console.WriteLine("\n");
                 switch (key)
                 {
                     case '0':
                         break;
                     case '1':
-                        MostrarAgendaConFereach(Agenda);
+                        MostrarAgendaConForeach(Agenda);
                         break;
                     case '2':
                         empleado = CrearEmpleado();
                         AgregarEmpleado(Agenda, empleado);
+                        break;
+                    /*case '3':
+                        Console.WriteLine(CantidaddeEmpleados(Agenda));
+                        break;*/
+                    case '3':
+                        Console.WriteLine(CalcularMonto(Agenda));
+                        break;
+                    default:
+                        Console.WriteLine("Error: Dato Ingresado no coincide con las opciones predefinidas.");
                         break;
                 }
             } while (key != '0');
@@ -47,7 +56,7 @@ namespace Lsita
             char[] _mes = { fechayhora[4], fechayhora[5] };
             char[] _dia = { fechayhora[6], fechayhora[7] };
             string[] charles;//fecha actual
-            char[] splitter = {' '};
+            char[] splitter = { ' ' };
             charles = _fecha.Split(splitter);
             ano = new string(aano);//año de nac
             mes = new string(_mes);//mes de nac
@@ -81,6 +90,11 @@ namespace Lsita
             public double Sueldo;
             public int hijos;
             public string Cargo;
+            public void MostrarTag()
+            {
+                Console.WriteLine("{0}, {1}",apellido,nombre);
+                Console.WriteLine("---------------------------------------------");
+            }
             public void MostrarEmpleado()
             {
                 Console.WriteLine("\n================================================================================");
@@ -93,7 +107,8 @@ namespace Lsita
                 Console.Write("Fecha de Ingreso: {0}\n", FIngreso);
                 Console.Write("Sueldo Básico: {0}\n", SB);
                 Console.Write("Cargo: {0}\n", Cargo);
-                Console.WriteLine("Antigüedad en la empresa: {0}",Antig);
+                Console.WriteLine("Hijos: {0}",hijos);
+                Console.WriteLine("Antigüedad en la empresa: {0}", Antig);
                 if (Jubil == 0) Console.WriteLine("Ya puede jubilarse.");
                 else Console.WriteLine("Años restantes para jubilarse: {0}", Jubil);
                 Console.WriteLine("\n--------------------------------------------------------------------------------");
@@ -105,20 +120,20 @@ namespace Lsita
         {
             double Adic;
             int SB;
-            SB = int.Parse(_SB) ; 
-            double porano=0.02;
+            SB = int.Parse(_SB);
+            double porano = 0.02;
             if (Ant == 0) Adic = 0;
-            else if (Ant>=20) Adic= SB * (porano * 25);
+            else if (Ant >= 20) Adic = SB * (porano * 25);
             else
             {
                 Adic = SB * (porano * Ant);
             }
             if (cargo == "Ingeniero" || cargo == "Especialista") Adic *= 1.5;
-            if ((EC == "Casado" || EC == "Casada") && hijos>2)
+            if ((EC == "Casado" || EC == "Casada") && hijos > 2)
             {
                 Adic += 5000;
             }
-            return Adic; 
+            return Adic;
         }
         public static int RandomNumber(int min, int max)
         {
@@ -127,7 +142,7 @@ namespace Lsita
         }
         public static Empleado CrearEmpleado()
         {
-            string _nombre, _apellido, _FechadeNac,_EC,_Sexo,_FIngreso,_SB;
+            string _nombre, _apellido, _FechadeNac, _EC, _Sexo, _FIngreso, _SB;
             Empleado nuevo;
             Console.Write("Ingrese Nombre del Empleado/a: ");
             _nombre = Console.ReadLine();
@@ -174,15 +189,34 @@ namespace Lsita
             var v = Enum.GetValues(typeof(T));
             return (T)v.GetValue(new Random().Next(v.Length));
         }
-        public static void MostrarAgendaConForeachM(List<Empleado> Agenda)
+        public static void MostrarAgendaConOpcion(List<Empleado> Agenda)
         {
+            int i = CantidaddeEmpleados(Agenda);
+            int a = 1;
+            if(i>0) Console.WriteLine("\n----------------Agenda---------------");
             foreach (Empleado emp in Agenda)
             {
-                emp.MostrarEmpleado();
+                if (i>0)
+                    {
+                        Console.Write("{0}.",a);
+                        emp.MostrarTag();
+                    }
+                a++;
             }
         }
-
-        public static void MostrarAgendaConFereach(List<Empleado> Agenda)
+        public static int CantidaddeEmpleados(List<Empleado> Agenda)
+        {
+            int i = 0;
+            Agenda.ForEach(x => i++);
+            return i;
+        }
+        public static double CalcularMonto(List<Empleado> Agenda)
+        {
+            double Monto = 0;
+            Agenda.ForEach(x => Monto += x.Sueldo);
+            return Monto;
+        }
+        public static void MostrarAgendaConForeach(List<Empleado> Agenda)
         {
             Agenda.ForEach(x => x.MostrarEmpleado());
         }
