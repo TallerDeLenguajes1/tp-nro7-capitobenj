@@ -15,6 +15,7 @@ namespace Lsita
             char key;
             List<Empleado> Agenda = new List<Empleado>();
             Empleado empleado;
+            int i = 1;
             do
             {
                 Console.WriteLine("1. Ver Agenda (Contactos: {0})", CantidaddeEmpleados(Agenda));
@@ -27,15 +28,13 @@ namespace Lsita
                     case '0':
                         break;
                     case '1':
-                        MostrarAgendaConForeach(Agenda);
+                        MostrarAgendaConOpcion(Agenda);
                         break;
                     case '2':
-                        empleado = CrearEmpleado();
+                        empleado = CrearEmpleado(i);
                         AgregarEmpleado(Agenda, empleado);
+                        i++;
                         break;
-                    /*case '3':
-                        Console.WriteLine(CantidaddeEmpleados(Agenda));
-                        break;*/
                     case '3':
                         Console.WriteLine(CalcularMonto(Agenda));
                         break;
@@ -90,10 +89,12 @@ namespace Lsita
             public double Sueldo;
             public int hijos;
             public string Cargo;
-            public void MostrarTag()
+            public int id;
+            public void MostrarTag(List<Empleado> Agenda)
             {
                 Console.WriteLine("{0}, {1}",apellido,nombre);
                 Console.WriteLine("---------------------------------------------");
+                
             }
             public void MostrarEmpleado()
             {
@@ -115,6 +116,19 @@ namespace Lsita
                 Console.WriteLine("Sueldo: {0}", Sueldo);
                 Console.WriteLine("\n================================================================================");
             }
+        }
+        public static void Buscarid(List<Empleado> Agenda, int idd)
+        {
+            int i = 0;
+            foreach (Empleado emp in Agenda)
+            {
+                if (emp.id == idd)
+                {
+                    i = 1;
+                    emp.MostrarEmpleado();
+                }
+            }
+            if (i == 0) Console.WriteLine("El ID especificado no existe en la lista.");
         }
         public static double CalcularAdicional(int Ant, string _SB, string cargo, string EC, int hijos)
         {
@@ -140,7 +154,7 @@ namespace Lsita
             Random random = new Random();
             return random.Next(min, max);
         }
-        public static Empleado CrearEmpleado()
+        public static Empleado CrearEmpleado(int i)
         {
             string _nombre, _apellido, _FechadeNac, _EC, _Sexo, _FIngreso, _SB;
             Empleado nuevo;
@@ -172,6 +186,7 @@ namespace Lsita
             else nuevo.Jubil = 65 - nuevo.Edad;
             if (nuevo.Jubil < 0) nuevo.Jubil = 0;
             nuevo.Cargo = Randomblow();
+            nuevo.id = i;
             nuevo.Sueldo = int.Parse(_SB) + CalcularAdicional(nuevo.Antig, _SB, nuevo.Cargo, nuevo.EC, nuevo.hijos);
             return nuevo;
         }
@@ -191,6 +206,7 @@ namespace Lsita
         }
         public static void MostrarAgendaConOpcion(List<Empleado> Agenda)
         {
+
             int i = CantidaddeEmpleados(Agenda);
             int a = 1;
             if(i>0) Console.WriteLine("\n----------------Agenda---------------");
@@ -199,10 +215,20 @@ namespace Lsita
                 if (i>0)
                     {
                         Console.Write("{0}.",a);
-                        emp.MostrarTag();
+                        emp.MostrarTag(Agenda);
                     }
                 a++;
             }
+            string key;
+            int key2;
+            do
+            {
+                Console.WriteLine("A Qué Empleado quiere mostrar?");
+                Console.WriteLine("0. Volver al menu principal");
+                key = Console.ReadLine();
+                key2 = int.Parse(key);
+                if(key2!=0) Buscarid(Agenda, key2);
+            } while (key != "0");
         }
         public static int CantidaddeEmpleados(List<Empleado> Agenda)
         {
